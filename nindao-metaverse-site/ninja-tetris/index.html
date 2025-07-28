@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷 ニンジャ・テトリス</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🥷 ニンジャ・テトリス</h1>
+            <p>忍者の技でブロックを操り、横一列を揃えよ！</p>
+        </header>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <!-- Score Info -->
+                <div class="info-panel">
+                    <h3>🏆 スコア</h3>
+                    <div class="score-display">
+                        <div class="score-item">
+                            <span class="label">現在:</span>
+                            <span class="value" id="currentScore">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="label">最高:</span>
+                            <span class="value" id="highScore">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level Info -->
+                <div class="info-panel">
+                    <h3>⚡ レベル</h3>
+                    <div class="level-display">
+                        <div class="score-item">
+                            <span class="label">レベル:</span>
+                            <span class="value" id="currentLevel">1</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="label">ライン:</span>
+                            <span class="value" id="linesCleared">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hold Block -->
+                <div class="info-panel">
+                    <h3>📦 ホールド</h3>
+                    <div class="preview-area" id="holdArea">
+                        <canvas id="holdCanvas" width="120" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Game Field -->
+            <div class="main-field">
+                <div class="game-canvas-container">
+                    <canvas id="gameCanvas" width="300" height="600"></canvas>
+                    
+                    <!-- Game Over Overlay -->
+                    <div class="game-over-overlay" id="gameOverOverlay" style="display: none;">
+                        <div class="game-over-content">
+                            <h2>🥷 忍者の修行終了</h2>
+                            <div class="final-stats">
+                                <div class="stat">
+                                    <span class="stat-label">最終スコア:</span>
+                                    <span class="stat-value" id="finalScore">0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">レベル:</span>
+                                    <span class="stat-value" id="finalLevel">1</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">消去ライン:</span>
+                                    <span class="stat-value" id="finalLines">0</span>
+                                </div>
+                            </div>
+                            <div class="game-over-buttons">
+                                <button class="btn primary" id="restartBtn">🔄 再挑戦</button>
+                                <button class="btn secondary" id="menuBtn">📋 メニュー</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pause Overlay -->
+                    <div class="pause-overlay" id="pauseOverlay" style="display: none;">
+                        <div class="pause-content">
+                            <h2>⏸️ 一時停止</h2>
+                            <p>Pキーまたはタップで再開</p>
+                            <button class="btn primary" id="resumeBtn">▶️ 再開</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Controls -->
+                <div class="game-controls">
+                    <button class="control-btn" id="pauseBtn">⏸️ ポーズ</button>
+                    <button class="control-btn" id="restartGameBtn">🔄 リスタート</button>
+                    <button class="control-btn" id="helpBtn">❓ 操作方法</button>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <!-- Next Blocks -->
+                <div class="info-panel">
+                    <h3>🔮 次のブロック</h3>
+                    <div class="next-blocks">
+                        <div class="next-item">
+                            <canvas id="next1Canvas" width="80" height="80"></canvas>
+                        </div>
+                        <div class="next-item">
+                            <canvas id="next2Canvas" width="60" height="60"></canvas>
+                        </div>
+                        <div class="next-item">
+                            <canvas id="next3Canvas" width="60" height="60"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Stats -->
+                <div class="info-panel">
+                    <h3>📊 統計</h3>
+                    <div class="stats-display">
+                        <div class="stat-row">
+                            <span class="stat-label">シングル:</span>
+                            <span class="stat-value" id="singleLines">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">ダブル:</span>
+                            <span class="stat-value" id="doubleLines">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">トリプル:</span>
+                            <span class="stat-value" id="tripleLines">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">テトリス:</span>
+                            <span class="stat-value" id="tetrisLines">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Mode -->
+                <div class="info-panel">
+                    <h3>🎯 モード</h3>
+                    <div class="mode-selector">
+                        <button class="mode-btn active" data-mode="classic">クラシック</button>
+                        <button class="mode-btn" data-mode="challenge">チャレンジ</button>
+                        <button class="mode-btn" data-mode="zen">禅モード</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-controls" id="mobileControls">
+            <div class="touch-row">
+                <button class="touch-btn" id="holdBtn">📦</button>
+                <button class="touch-btn" id="rotateBtn">🔄</button>
+                <button class="touch-btn" id="hardDropBtn">⬇️</button>
+            </div>
+            <div class="touch-row">
+                <button class="touch-btn" id="leftBtn">⬅️</button>
+                <button class="touch-btn" id="downBtn">⬇️</button>
+                <button class="touch-btn" id="rightBtn">➡️</button>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div class="modal" id="helpModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>❓ 操作方法</h3>
+                    <button class="close-btn" id="closeHelp">&times;</button>
+                </div>
+                <div class="help-content">
+                    <div class="help-section">
+                        <h4>🖥️ PC操作</h4>
+                        <div class="controls-grid">
+                            <div class="control-item">
+                                <kbd>A</kbd> <kbd>←</kbd>
+                                <span>左移動</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>D</kbd> <kbd>→</kbd>
+                                <span>右移動</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>S</kbd> <kbd>↓</kbd>
+                                <span>高速落下</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>W</kbd> <kbd>↑</kbd>
+                                <span>回転</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>Q</kbd>
+                                <span>逆回転</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>Space</kbd>
+                                <span>ハードドロップ</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>C</kbd>
+                                <span>ホールド</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>P</kbd>
+                                <span>ポーズ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>📱 モバイル操作</h4>
+                        <div class="mobile-help">
+                            <p>• 画面下部のボタンで操作</p>
+                            <p>• ゲーム画面を左右タップで移動</p>
+                            <p>• ゲーム画面を下にスワイプでハードドロップ</p>
+                            <p>• ゲーム画面をタップで回転</p>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>🎯 ゲームルール</h4>
+                        <ul class="rules-list">
+                            <li>落下するニンジャブロックを操作</li>
+                            <li>横一列を揃えるとライン消去</li>
+                            <li>4ライン同時消去で「テトリス」ボーナス</li>
+                            <li>ブロックが上端に達するとゲームオーバー</li>
+                            <li>レベルが上がると落下速度が増加</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="start-screen" id="startScreen">
+            <div class="start-content">
+                <h1>🥷 ニンジャ・テトリス</h1>
+                <p class="subtitle">忍者の技でブロックを操れ！</p>
+                
+                <div class="ninja-demo">
+                    <img src="ninja_gif/gif.gif" alt="Ninja Demo" class="demo-gif">
+                    <img src="ninja_gif/gif (5).gif" alt="Ninja Demo" class="demo-gif">
+                    <img src="ninja_gif/gif (10).gif" alt="Ninja Demo" class="demo-gif">
+                </div>
+
+                <div class="start-buttons">
+                    <button class="btn large primary" id="startGameBtn">🚀 ゲーム開始</button>
+                    <button class="btn large secondary" id="howToPlayBtn">❓ 遊び方</button>
+                </div>
+
+                <div class="best-score">
+                    <span>最高スコア: <span id="displayHighScore">0</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Effects -->
+    <div class="background-effects">
+        <div class="ninja-star star1">⭐</div>
+        <div class="ninja-star star2">✦</div>
+        <div class="ninja-star star3">⭐</div>
+        <div class="ninja-star star4">✦</div>
+        <div class="ninja-star star5">⭐</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

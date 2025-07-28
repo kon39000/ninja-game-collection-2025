@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷 ニンジャ・リアクション・ゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🥷 ニンジャ・リアクション・ゲーム</h1>
+            <p>忍者の素早さで同じGIFを見つけろ！</p>
+        </header>
+
+        <!-- Game Setup -->
+        <div class="setup-screen" id="setupScreen">
+            <div class="setup-content">
+                <h2>🎯 修行の準備</h2>
+                
+                <div class="difficulty-selection">
+                    <h3>難易度を選択：</h3>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn active" data-difficulty="easy">
+                            <span class="difficulty-name">初心者</span>
+                            <span class="difficulty-desc">4個の選択肢・60秒</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="normal">
+                            <span class="difficulty-name">中級者</span>
+                            <span class="difficulty-desc">6個の選択肢・90秒</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="hard">
+                            <span class="difficulty-name">上級者</span>
+                            <span class="difficulty-desc">9個の選択肢・120秒</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="start-btn" id="startBtn">🚀 修行開始！</button>
+            </div>
+        </div>
+
+        <!-- Main Game -->
+        <div class="game-screen" id="gameScreen" style="display: none;">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">スコア:</span>
+                    <span class="status-value" id="score">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">残り時間:</span>
+                    <span class="status-value" id="timeLeft">60</span>秒
+                </div>
+                <div class="status-item">
+                    <span class="status-label">連続正解:</span>
+                    <span class="status-value" id="streak">0</span>
+                </div>
+            </div>
+
+            <!-- Target Area -->
+            <div class="target-area">
+                <h2>🎯 これを探せ！</h2>
+                <div class="target-gif-container">
+                    <img id="targetGif" src="" alt="ターゲットGIF" class="target-gif">
+                </div>
+            </div>
+
+            <!-- Choice Area -->
+            <div class="choice-area">
+                <h3>⚡ 素早く選択せよ！</h3>
+                <div class="choice-grid" id="choiceGrid">
+                    <!-- 選択肢GIFが動的に挿入される -->
+                </div>
+            </div>
+
+            <!-- Game Controls -->
+            <div class="game-controls">
+                <button class="control-btn" id="pauseBtn">⏸️ 一時停止</button>
+                <button class="control-btn" id="restartBtn">🔄 リスタート</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="result-screen" id="resultScreen" style="display: none;">
+            <div class="result-content">
+                <h2>🏆 修行完了！</h2>
+                
+                <div class="final-score">
+                    <div class="score-display">
+                        <span class="score-number" id="finalScore">0</span>
+                        <span class="score-label">点</span>
+                    </div>
+                </div>
+                
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">正解数:</span>
+                        <span class="stat-value" id="correctAnswers">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">最高連続:</span>
+                        <span class="stat-value" id="maxStreak">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">平均反応時間:</span>
+                        <span class="stat-value" id="avgReactionTime">0.0</span>秒
+                    </div>
+                </div>
+                
+                <div class="rank-display">
+                    <div class="rank-title">忍者ランク:</div>
+                    <div class="rank-badge" id="rankBadge">見習い忍者</div>
+                    <div class="rank-message" id="rankMessage">修行を続けよ！</div>
+                </div>
+                
+                <div class="result-actions">
+                    <button class="action-btn" id="playAgainBtn">🔄 もう一度</button>
+                    <button class="action-btn" id="changeDifficultyBtn">⚙️ 難易度変更</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

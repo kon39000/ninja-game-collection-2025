@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷 ニンジャの忍び足 - Ninja Stealth Mission</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🥷 ニンジャの忍び足</h1>
+            <p>敵に見つからずに宝物を盗んで脱出せよ！</p>
+        </header>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <!-- Mission Status -->
+                <div class="info-panel">
+                    <h3>🎯 ミッション状況</h3>
+                    <div class="mission-display">
+                        <div class="mission-item">
+                            <span class="label">ステージ:</span>
+                            <span class="value" id="currentStage">1</span>
+                        </div>
+                        <div class="mission-item">
+                            <span class="label">宝物:</span>
+                            <span class="value" id="treasuresCollected">0</span>
+                            <span class="total">/ <span id="totalTreasures">1</span></span>
+                        </div>
+                        <div class="mission-item">
+                            <span class="label">ステータス:</span>
+                            <span class="value" id="missionStatus">潜入中</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ninja Status -->
+                <div class="info-panel">
+                    <h3>🥷 忍者状態</h3>
+                    <div class="ninja-status">
+                        <div class="status-bar">
+                            <span class="status-label">ステルス度:</span>
+                            <div class="stealth-bar">
+                                <div class="stealth-fill" id="stealthBar"></div>
+                            </div>
+                            <span class="status-value" id="stealthValue">100%</span>
+                        </div>
+                        <div class="ninja-state">
+                            <span class="state-label">状態:</span>
+                            <span class="state-value" id="ninjaState">隠密中</span>
+                        </div>
+                        <div class="movement-mode">
+                            <span class="mode-label">移動:</span>
+                            <span class="mode-value" id="movementMode">通常</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ninja Abilities -->
+                <div class="info-panel">
+                    <h3>🔮 忍術</h3>
+                    <div class="abilities-display">
+                        <div class="ability-item" id="smokeBombAbility">
+                            <div class="ability-icon">💨</div>
+                            <div class="ability-info">
+                                <div class="ability-name">煙玉</div>
+                                <div class="ability-count" id="smokeBombCount">1</div>
+                            </div>
+                        </div>
+                        <div class="ability-item" id="cloneAbility">
+                            <div class="ability-icon">👥</div>
+                            <div class="ability-info">
+                                <div class="ability-name">分身術</div>
+                                <div class="ability-count" id="cloneCount">1</div>
+                            </div>
+                        </div>
+                        <div class="ability-item" id="invisibilityAbility">
+                            <div class="ability-icon">👻</div>
+                            <div class="ability-info">
+                                <div class="ability-name">透明化</div>
+                                <div class="ability-count" id="invisibilityCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Game Field -->
+            <div class="main-field">
+                <div class="game-canvas-container">
+                    <canvas id="gameCanvas" width="600" height="480"></canvas>
+                    
+                    <!-- Game Over Overlay -->
+                    <div class="game-over-overlay" id="gameOverOverlay" style="display: none;">
+                        <div class="game-over-content">
+                            <h2 id="gameOverTitle">🥷 ミッション失敗</h2>
+                            <div class="mission-results">
+                                <div class="result-item">
+                                    <span class="result-label">クリアステージ:</span>
+                                    <span class="result-value" id="finalStage">0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">回収宝物:</span>
+                                    <span class="result-value" id="finalTreasures">0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">ランク:</span>
+                                    <span class="result-value" id="finalRank">C</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">クリア時間:</span>
+                                    <span class="result-value" id="finalTime">--:--</span>
+                                </div>
+                            </div>
+                            <div class="game-over-buttons">
+                                <button class="btn primary" id="retryBtn">🔄 再挑戦</button>
+                                <button class="btn secondary" id="stageSelectBtn">📋 ステージ選択</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pause Overlay -->
+                    <div class="pause-overlay" id="pauseOverlay" style="display: none;">
+                        <div class="pause-content">
+                            <h2>⏸️ 一時停止</h2>
+                            <p>Pキーまたはタップで再開</p>
+                            <button class="btn primary" id="resumeBtn">▶️ 再開</button>
+                        </div>
+                    </div>
+
+                    <!-- Stage Clear Overlay -->
+                    <div class="stage-clear-overlay" id="stageClearOverlay" style="display: none;">
+                        <div class="stage-clear-content">
+                            <h2>🎉 ステージクリア！</h2>
+                            <div class="clear-stats">
+                                <div class="clear-item">
+                                    <span class="clear-label">ランク:</span>
+                                    <span class="clear-value" id="clearRank">S</span>
+                                </div>
+                                <div class="clear-item">
+                                    <span class="clear-label">発見回数:</span>
+                                    <span class="clear-value" id="clearDetections">0</span>
+                                </div>
+                                <div class="clear-item">
+                                    <span class="clear-label">クリア時間:</span>
+                                    <span class="clear-value" id="clearTime">01:23</span>
+                                </div>
+                            </div>
+                            <div class="clear-buttons">
+                                <button class="btn primary" id="nextStageBtn">➡️ 次のステージ</button>
+                                <button class="btn secondary" id="replayStageBtn">🔄 もう一度</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Controls -->
+                <div class="game-controls">
+                    <button class="control-btn" id="pauseBtn">⏸️ ポーズ</button>
+                    <button class="control-btn" id="restartBtn">🔄 リスタート</button>
+                    <button class="control-btn" id="helpBtn">❓ 操作方法</button>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <!-- Minimap -->
+                <div class="info-panel">
+                    <h3>🗺️ マップ</h3>
+                    <div class="minimap-container">
+                        <canvas id="minimapCanvas" width="150" height="120"></canvas>
+                    </div>
+                </div>
+
+                <!-- Enemy Status -->
+                <div class="info-panel">
+                    <h3>👁️ 警備状況</h3>
+                    <div class="enemy-status">
+                        <div class="alert-level">
+                            <span class="alert-label">警戒レベル:</span>
+                            <span class="alert-value" id="alertLevel">平常</span>
+                        </div>
+                        <div class="enemy-count">
+                            <span class="enemy-label">警備兵:</span>
+                            <span class="enemy-value" id="enemyCount">1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage Progress -->
+                <div class="info-panel">
+                    <h3>📊 進行状況</h3>
+                    <div class="stage-progress">
+                        <div class="stage-item" data-stage="1">
+                            <div class="stage-number">1</div>
+                            <div class="stage-name">修行の館</div>
+                            <div class="stage-status unlocked">🔓</div>
+                        </div>
+                        <div class="stage-item" data-stage="2">
+                            <div class="stage-number">2</div>
+                            <div class="stage-name">庭園</div>
+                            <div class="stage-status locked">🔒</div>
+                        </div>
+                        <div class="stage-item" data-stage="3">
+                            <div class="stage-number">3</div>
+                            <div class="stage-name">倉庫</div>
+                            <div class="stage-status locked">🔒</div>
+                        </div>
+                        <div class="stage-item" data-stage="4">
+                            <div class="stage-number">4</div>
+                            <div class="stage-name">奥座敷</div>
+                            <div class="stage-status locked">🔒</div>
+                        </div>
+                        <div class="stage-item" data-stage="5">
+                            <div class="stage-number">5</div>
+                            <div class="stage-name">天守閣</div>
+                            <div class="stage-status locked">🔒</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-controls" id="mobileControls">
+            <div class="touch-row">
+                <button class="touch-btn ability-btn" id="smokeBombBtn">💨</button>
+                <button class="touch-btn ability-btn" id="cloneBtn">👥</button>
+                <button class="touch-btn ability-btn" id="invisibilityBtn">👻</button>
+            </div>
+            <div class="touch-row">
+                <button class="touch-btn movement-btn" id="sneakBtn">🤫</button>
+                <button class="touch-btn movement-btn" id="hideBtn">🫥</button>
+                <button class="touch-btn movement-btn" id="runBtn">🏃</button>
+            </div>
+            <div class="touch-row dpad">
+                <div class="dpad-container">
+                    <button class="dpad-btn" id="upBtn">⬆️</button>
+                    <div class="dpad-middle">
+                        <button class="dpad-btn" id="leftBtn">⬅️</button>
+                        <div class="dpad-center"></div>
+                        <button class="dpad-btn" id="rightBtn">➡️</button>
+                    </div>
+                    <button class="dpad-btn" id="downBtn">⬇️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div class="modal" id="helpModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>❓ 操作方法</h3>
+                    <button class="close-btn" id="closeHelp">&times;</button>
+                </div>
+                <div class="help-content">
+                    <div class="help-section">
+                        <h4>🖥️ PC操作</h4>
+                        <div class="controls-grid">
+                            <div class="control-item">
+                                <kbd>WASD</kbd> <kbd>↑↓←→</kbd>
+                                <span>移動</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>Shift</kbd>
+                                <span>しゃがみ移動（静音）</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>Space</kbd>
+                                <span>隠れる</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>1</kbd>
+                                <span>煙玉</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>2</kbd>
+                                <span>分身術</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>3</kbd>
+                                <span>透明化</span>
+                            </div>
+                            <div class="control-item">
+                                <kbd>P</kbd>
+                                <span>ポーズ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>📱 モバイル操作</h4>
+                        <div class="mobile-help">
+                            <p><strong>基本操作：</strong></p>
+                            <p>• 十字キーで移動</p>
+                            <p>• 🤫ボタンでしゃがみ移動（静音）</p>
+                            <p>• 🫥ボタンで隠れる</p>
+                            <p>• 能力ボタン（💨👥👻）で忍術使用</p>
+                            
+                            <p><strong>ゲーム画面ジェスチャー：</strong></p>
+                            <p>• タップ：しゃがみ切り替え</p>
+                            <p>• ダブルタップ：煙玉使用</p>
+                            <p>• 長押し（0.5秒）：隠れる</p>
+                            <p>• スワイプ：移動方向</p>
+                            
+                            <p><strong>ヒント：</strong></p>
+                            <p>• 縦向きでのプレイを推奨</p>
+                            <p>• バイブレーション対応デバイスでは触覚フィードバックあり</p>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>🎯 ゲームルール</h4>
+                        <ul class="rules-list">
+                            <li>敵に発見されずに宝物を全て回収</li>
+                            <li>脱出ポイントに到達してクリア</li>
+                            <li>3回発見されるとミッション失敗</li>
+                            <li>しゃがみ移動で足音を消せる</li>
+                            <li>障害物の後ろに隠れて身を潜める</li>
+                            <li>忍術を駆使してピンチを乗り切る</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="start-screen" id="startScreen">
+            <div class="start-content">
+                <h1>🥷 ニンジャの忍び足</h1>
+                <p class="subtitle">敵に見つからずに宝物を盗んで脱出せよ！</p>
+                
+                <div class="ninja-demo">
+                    <img src="ninja_gif/gif.gif" alt="Ninja Demo" class="demo-gif">
+                    <img src="ninja_gif/gif (7).gif" alt="Ninja Demo" class="demo-gif">
+                    <img src="ninja_gif/gif (14).gif" alt="Ninja Demo" class="demo-gif">
+                </div>
+
+                <div class="mission-briefing">
+                    <h3>🎯 ミッション概要</h3>
+                    <p>闇夜に紛れて活動する忍者となり、厳重に警備された敵の屋敷に侵入。</p>
+                    <p>盗まれた村の宝物を取り戻し、誰にも気づかれることなく脱出せよ。</p>
+                </div>
+
+                <div class="stage-selection">
+                    <h3>📋 ステージ選択</h3>
+                    <div class="stage-buttons">
+                        <button class="stage-btn unlocked" data-stage="1">
+                            <div class="stage-num">1</div>
+                            <div class="stage-title">修行の館</div>
+                            <div class="stage-desc">基本操作を学ぶ</div>
+                        </button>
+                        <button class="stage-btn locked" data-stage="2">
+                            <div class="stage-num">2</div>
+                            <div class="stage-title">庭園の忍び込み</div>
+                            <div class="stage-desc">植え込みに隠れて潜入</div>
+                        </button>
+                        <button class="stage-btn locked" data-stage="3">
+                            <div class="stage-num">3</div>
+                            <div class="stage-title">倉庫の宝</div>
+                            <div class="stage-desc">箱の間を縫って進む</div>
+                        </button>
+                        <button class="stage-btn locked" data-stage="4">
+                            <div class="stage-num">4</div>
+                            <div class="stage-title">屋敷の奥座敷</div>
+                            <div class="stage-desc">複雑な部屋構造</div>
+                        </button>
+                        <button class="stage-btn locked" data-stage="5">
+                            <div class="stage-num">5</div>
+                            <div class="stage-title">城の天守閣</div>
+                            <div class="stage-desc">最終決戦</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="start-buttons">
+                    <button class="btn large primary" id="startMissionBtn">🚀 ミッション開始</button>
+                    <button class="btn large secondary" id="tutorialBtn">📚 チュートリアル</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Effects -->
+    <div class="background-effects">
+        <div class="ninja-star star1">⭐</div>
+        <div class="ninja-star star2">✦</div>
+        <div class="ninja-star star3">💫</div>
+        <div class="ninja-star star4">⭐</div>
+        <div class="ninja-star star5">✦</div>
+        <div class="falling-leaf leaf1">🍃</div>
+        <div class="falling-leaf leaf2">🍂</div>
+        <div class="falling-leaf leaf3">🍃</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バズ・シミュレーターX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="logo">X</div>
+            <nav class="nav">
+                <div class="nav-item active">
+                    <span class="icon">🏠</span>
+                    <span class="text">ホーム</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">🔍</span>
+                    <span class="text">話題を検索</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">🔔</span>
+                    <span class="text">通知</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">✉️</span>
+                    <span class="text">メッセージ</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">👤</span>
+                    <span class="text">プロフィール</span>
+                </div>
+            </nav>
+            <button class="post-btn">ポストする</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header">
+                <h1>ホーム</h1>
+                <div class="warning">
+                    ⚠️ これはXそのものではなく、バズ体験を楽しむ遊びのツールです
+                </div>
+            </div>
+
+            <!-- Tweet Composer -->
+            <div class="composer" id="composer">
+                <div class="avatar">🥷</div>
+                <div class="compose-area">
+                    <textarea 
+                        id="tweetText" 
+                        placeholder="いまどうしてる？"
+                        maxlength="140"
+                    ></textarea>
+                    
+                    <div class="selected-media" id="selectedMedia" style="display: none;">
+                        <img id="selectedGif" alt="選択されたGIF">
+                    </div>
+                    
+                    <div class="gif-section">
+                        <div class="section-title">🔥 バズ・シミュレーターX - GIFを選択:</div>
+                        <div class="gif-grid" id="gifGrid"></div>
+                    </div>
+                    
+                    <div class="compose-footer">
+                        <div class="media-icons">
+                            <span class="media-icon">📷</span>
+                            <span class="media-icon active">🎭</span>
+                            <span class="media-icon">📊</span>
+                            <span class="media-icon">😊</span>
+                        </div>
+                        <div class="post-area">
+                            <span class="char-count" id="charCount">0/140</span>
+                            <button class="buzz-btn" id="buzzBtn" disabled>バズ度を診断</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results" style="display: none;">
+                <div class="result-tweet">
+                    <div class="tweet-header">
+                        <div class="avatar">🥷</div>
+                        <div class="user-info">
+                            <span class="name">NinjaDAO Member</span>
+                            <span class="username">@ninja_buzzer</span>
+                            <span class="time">• 今</span>
+                        </div>
+                    </div>
+                    <div class="tweet-content">
+                        <div class="tweet-text" id="resultText"></div>
+                        <div class="tweet-media" id="resultMedia" style="display: none;">
+                            <img id="resultGif" alt="投稿のGIF">
+                        </div>
+                        <div class="tweet-stats">
+                            <div class="stat">
+                                <span class="icon">💬</span>
+                                <span class="count">42</span>
+                            </div>
+                            <div class="stat">
+                                <span class="icon">🔄</span>
+                                <span class="count" id="retweets">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="icon">❤️</span>
+                                <span class="count" id="likes">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="icon">📊</span>
+                                <span class="count" id="views">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="analysis">
+                    <div class="rank-display">
+                        <div class="rank-badge" id="rankBadge">診断中...</div>
+                        <div class="rank-message" id="rankMessage">バズ度を計算しています...</div>
+                    </div>
+                    
+                    <div class="reaction-area" id="reactionArea">
+                        <img id="reactionGif" alt="リアクションGIF">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="share-btn" id="shareBtn">Xで投稿する</button>
+                        <button class="retry-btn" id="retryBtn">もう一度診断</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="trending">
+            <div class="trending-section">
+                <h3>いま話題</h3>
+                <div class="trend-item">
+                    <div class="trend-category">ゲーム・トレンド</div>
+                    <div class="trend-topic">#バズシムX</div>
+                    <div class="trend-count">1,234件のポスト</div>
+                </div>
+                <div class="trend-item">
+                    <div class="trend-category">暗号資産・トレンド</div>
+                    <div class="trend-topic">#NINJADAO</div>
+                    <div class="trend-count">5,678件のポスト</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

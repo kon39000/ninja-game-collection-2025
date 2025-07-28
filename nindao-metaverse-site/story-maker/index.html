@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷 ニンジャ・ストーリー・メーカー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🥷 ニンジャ・ストーリー・メーカー</h1>
+                <p>GIFを組み合わせて忍者の物語を作ろう</p>
+                <div class="header-controls">
+                    <button class="btn primary" id="newStoryBtn">📜 新しい物語</button>
+                    <button class="btn secondary" id="loadStoryBtn">📂 物語を読込</button>
+                    <button class="btn secondary" id="saveStoryBtn">💾 保存</button>
+                    <button class="btn secondary" id="helpBtn">❓ 使い方</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- GIF Library -->
+                <div class="section">
+                    <h3>🎭 忍者ライブラリ</h3>
+                    <div class="gif-library" id="gifLibrary">
+                        <!-- GIFs will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Templates -->
+                <div class="section">
+                    <h3>📋 テンプレート</h3>
+                    <div class="templates">
+                        <button class="template-btn" data-template="training">
+                            🏋️ 忍者の修行
+                        </button>
+                        <button class="template-btn" data-template="mission">
+                            ⚔️ 忍者の任務
+                        </button>
+                        <button class="template-btn" data-template="daily">
+                            🏠 忍者の日常
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Saved Stories -->
+                <div class="section">
+                    <h3>📚 保存済み物語</h3>
+                    <div class="saved-stories" id="savedStories">
+                        <!-- Saved stories will be listed here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Editor -->
+            <main class="editor">
+                <!-- Story Info -->
+                <div class="story-info">
+                    <input 
+                        type="text" 
+                        id="storyTitle" 
+                        placeholder="物語のタイトルを入力..."
+                        class="story-title-input"
+                    >
+                    <div class="story-stats">
+                        <span class="stat">シーン数: <span id="sceneCount">0</span>/20</span>
+                        <span class="stat">文字数: <span id="textCount">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Storyboard -->
+                <div class="storyboard-container">
+                    <h3>📖 ストーリーボード</h3>
+                    <div class="storyboard" id="storyboard">
+                        <div class="empty-state">
+                            <div class="empty-icon">📜</div>
+                            <p>左のライブラリからGIFをドラッグして<br>物語を作り始めよう！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Editor -->
+                <div class="text-editor" id="textEditor" style="display: none;">
+                    <h3>✏️ シーンの説明</h3>
+                    <div class="editor-content">
+                        <div class="selected-scene" id="selectedScene">
+                            <img id="selectedGif" src="" alt="選択中のGIF">
+                            <div class="scene-info">
+                                <span class="scene-number" id="sceneNumber">シーン #1</span>
+                            </div>
+                        </div>
+                        <textarea 
+                            id="sceneText" 
+                            placeholder="このシーンの説明を入力してください（100文字まで）"
+                            maxlength="100"
+                        ></textarea>
+                        <div class="text-counter">
+                            <span id="currentTextLength">0</span>/100文字
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+                    <button class="btn primary" id="previewBtn">
+                        ▶️ プレビュー
+                    </button>
+                    <button class="btn secondary" id="exportBtn">
+                        📤 エクスポート
+                    </button>
+                    <button class="btn danger" id="clearBtn">
+                        🗑️ クリア
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <!-- Preview Modal -->
+        <div class="modal" id="previewModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📖 物語プレビュー</h3>
+                    <button class="close-btn" id="closePreview">&times;</button>
+                </div>
+                <div class="preview-container">
+                    <div class="preview-scene" id="previewScene">
+                        <img id="previewGif" src="" alt="プレビューGIF">
+                        <div class="preview-text" id="previewText"></div>
+                        <div class="preview-navigation">
+                            <button class="nav-btn" id="prevScene">⬅️ 前</button>
+                            <span class="scene-indicator" id="sceneIndicator">1 / 1</span>
+                            <button class="nav-btn" id="nextScene">➡️ 次</button>
+                        </div>
+                    </div>
+                    <div class="preview-controls">
+                        <button class="btn secondary" id="autoPlayBtn">🔄 自動再生</button>
+                        <div class="speed-control">
+                            <label>速度:</label>
+                            <select id="playSpeed">
+                                <option value="1000">遅い (1秒)</option>
+                                <option value="2000" selected>普通 (2秒)</option>
+                                <option value="3000">速い (3秒)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load Story Modal -->
+        <div class="modal" id="loadModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📂 物語を読み込み</h3>
+                    <button class="close-btn" id="closeLoad">&times;</button>
+                </div>
+                <div class="story-list" id="storyList">
+                    <!-- Saved stories will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div class="modal" id="helpModal">
+            <div class="modal-content help-content">
+                <div class="modal-header">
+                    <h3>❓ 使い方ガイド</h3>
+                    <button class="close-btn" id="closeHelp">&times;</button>
+                </div>
+                <div class="help-guide">
+                    <div class="help-section">
+                        <h4>🎯 基本的な使い方</h4>
+                        <div class="help-steps">
+                            <div class="help-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <strong>物語のタイトルを入力</strong>
+                                    <p>上部のテキストボックスに物語のタイトルを入力してください</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <strong>GIFを選んでドラッグ&ドロップ</strong>
+                                    <p>左の「忍者ライブラリ」からGIFを選び、中央のストーリーボードにドラッグしてください</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <strong>シーンをクリックしてテキスト追加</strong>
+                                    <p>作成されたシーンカードをクリックすると、下部にテキスト編集エリアが表示されます</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <strong>説明文を入力</strong>
+                                    <p>テキストエリアにシーンの説明を入力してください（最大100文字）</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>🔧 便利な機能</h4>
+                        <div class="help-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">📋</span>
+                                <div>
+                                    <strong>テンプレート</strong>
+                                    <p>「忍者の修行」「忍者の任務」「忍者の日常」のサンプル物語から始められます</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">▶️</span>
+                                <div>
+                                    <strong>プレビュー</strong>
+                                    <p>作成した物語を実際に見ることができます。自動再生機能もあります</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">💾</span>
+                                <div>
+                                    <strong>保存・読込</strong>
+                                    <p>作成した物語はブラウザに保存され、いつでも続きから編集できます</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">📤</span>
+                                <div>
+                                    <strong>エクスポート</strong>
+                                    <p>完成した物語をHTMLファイルとしてダウンロードできます</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>⌨️ キーボードショートカット</h4>
+                        <div class="shortcuts">
+                            <div class="shortcut-item">
+                                <kbd>Ctrl</kbd> + <kbd>S</kbd> <span>物語を保存</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Ctrl</kbd> + <kbd>N</kbd> <span>新しい物語</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Esc</kbd> <span>モーダルを閉じる</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>💡 コツ</h4>
+                        <ul class="tips-list">
+                            <li>物語は最大20シーンまで作成できます</li>
+                            <li>シーンの順序は追加した順番になります</li>
+                            <li>シーンカードの「×」ボタンで削除できます</li>
+                            <li>テキストは100文字まで入力可能です</li>
+                            <li>まずはテンプレートから始めて、慣れたらオリジナル物語を作ってみましょう</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="notification" id="notification">
+            <span class="notification-text" id="notificationText"></span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
