@@ -1,0 +1,18 @@
+{
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/nindao-metaverse-site/(.*)",
+      "dest": "/nindao-metaverse-site/$1"
+    },
+    {
+      "src": "/ninja_gif/(.*)",
+      "dest": "/ninja_gif/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
